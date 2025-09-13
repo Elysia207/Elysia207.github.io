@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>极简书籍收藏</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: #f0f2f5; color: #333; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 30px; }
+        h1 { color: #2c3e50; margin-bottom: 10px; }
+        .form-container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+        button { padding: 10px 20px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background: #2980b9; }
+        #add-btn { background: #2ecc71; }
+        #add-btn:hover { background: #27ae60; }
+        .books-container { display: grid; gap: 15px; }
+        .book-card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .book-title { font-weight: bold; margin-bottom: 5px; color: #2c3e50; }
+        .book-author { color: #7f8c8d; margin-bottom: 10px; }
+        .delete-btn { background: #e74c3c; padding: 5px 10px; font-size: 0.9em; }
+        footer { text-align: center; margin-top: 40px; color: #7f8c8d; }
+        @media (max-width: 600px) {
+            .input-group { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>我的书籍收藏</h1>
+            <p>一个极简的书籍管理工具</p>
+        </header>
+        
+        <div class="form-container">
+            <div class="input-group">
+                <input type="text" id="title" placeholder="书名">
+                <input type="text" id="author" placeholder="作者">
+            </div>
+            <button id="add-btn">添加书籍</button>
+        </div>
+        
+        <div class="books-container" id="books-container">
+            <!-- 书籍将通过JavaScript动态添加 -->
+        </div>
+        
+        <footer>
+            <p>计算机专业作业 - 极简书籍收藏管理器 &copy; 2023</p>
+        </footer>
+    </div>
+
+    <script>
+        // 示例初始数据
+        let books = [
+            { id: 1, title: "JavaScript高级程序设计", author: "Nicholas C. Zakas" },
+            { id: 2, title: "CSS揭秘", author: "Lea Verou" },
+            { id: 3, title: "算法导论", author: "Thomas H. Cormen" }
+        ];
+
+        // DOM元素
+        const booksContainer = document.getElementById('books-container');
+        const titleInput = document.getElementById('title');
+        const authorInput = document.getElementById('author');
+        const addBtn = document.getElementById('add-btn');
+
+        // 渲染书籍列表
+        function renderBooks() {
+            booksContainer.innerHTML = '';
+            books.forEach(book => {
+                const bookCard = document.createElement('div');
+                bookCard.className = 'book-card';
+                bookCard.innerHTML = `
+                    <div class="book-title">${book.title}</div>
+                    <div class="book-author">作者: ${book.author}</div>
+                    <button class="delete-btn" data-id="${book.id}">删除</button>
+                `;
+                booksContainer.appendChild(bookCard);
+            });
+            
+            // 添加删除按钮事件监听
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = parseInt(e.target.dataset.id);
+                    deleteBook(id);
+                });
+            });
+        }
+
+        // 添加新书
+        function addBook() {
+            const title = titleInput.value.trim();
+            const author = authorInput.value.trim();
+            
+            if (title && author) {
+                const newBook = {
+                    id: books.length > 0 ? Math.max(...books.map(book => book.id)) + 1 : 1,
+                    title,
+                    author
+                };
+                
+                books.push(newBook);
+                renderBooks();
+                titleInput.value = '';
+                authorInput.value = '';
+                titleInput.focus();
+            }
+        }
+
+        // 删除书籍
+        function deleteBook(id) {
+            if (confirm('确定要删除这本书吗？')) {
+                books = books.filter(book => book.id !== id);
+                renderBooks();
+            }
+        }
+
+        // 事件监听
+        addBtn.addEventListener('click', addBook);
+
+        // 初始化渲染
+        renderBooks();
+    </script>
+</body>
+</html>
